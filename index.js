@@ -55,3 +55,21 @@ if (command === "update") {
     }
   } else throw new Error("Task does not exist, please create first");
 }
+
+// task-cli delete 1
+// Delete
+
+if (command === "delete") {
+  let id = argv[3];
+  if (fs.existsSync("tracker.json")) {
+    let file = JSON.parse(fs.readFileSync("tracker.json", "utf-8"));
+    let newFile = file.filter((f, _) => f.id != parseInt(id));
+    if (newFile.length === file.length)
+      throw new Error("Task specified does not exist");
+    let content = JSON.stringify(newFile);
+    fs.writeFileSync("tracker.json", content, (err) => {
+      if (err) throw new Error(err);
+      else console.log(`Task (ID:${id}) deleted successfully`);
+    });
+  } else throw new Error("No Task Exist, Please add before deleting");
+}
