@@ -82,14 +82,31 @@ if (command === "list") {
     let file = JSON.parse(fs.readFileSync("tracker.json", "utf-8"));
     if (file.length === 0)
       throw new Error("No Tasks Exist, Consider adding some");
-    file.map((f, _) => {
-      console.log("\n");
-      console.log(`Task ID - ${f.id}`);
-      console.log(`Description - ${f.description}`);
-      console.log(`Status - ${f.status}`);
-      console.log(`Created At - ${f.createdAt}`);
-      console.log(`Updated At - ${f.updatedAt}`);
-    });
+    else {
+      if (argv.length > 3) {
+        //input contains status filter
+        let status = argv[3];
+        file.map((f, _) => {
+          if (f.status === status) {
+            console.log("\n");
+            console.log(`Task ID - ${f.id}`);
+            console.log(`Description - ${f.description}`);
+            console.log(`Status - ${f.status}`);
+            console.log(`Created At - ${f.createdAt}`);
+            console.log(`Updated At - ${f.updatedAt}`);
+          }
+        });
+      } else {
+        file.map((f, _) => {
+          console.log("\n");
+          console.log(`Task ID - ${f.id}`);
+          console.log(`Description - ${f.description}`);
+          console.log(`Status - ${f.status}`);
+          console.log(`Created At - ${f.createdAt}`);
+          console.log(`Updated At - ${f.updatedAt}`);
+        });
+      }
+    }
   } else {
     throw new Error("No Tasks Exist, Consider adding some");
   }
