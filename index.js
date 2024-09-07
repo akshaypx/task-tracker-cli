@@ -4,30 +4,32 @@ const fs = require("node:fs");
 const command = argv[2];
 
 // Adding Tasks
+
 if (command === "add") {
-  let content = [];
-  let id = 0;
+  let content = "";
+  let record = {
+    id: 1,
+    description: argv[3],
+    status: "todo",
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
   if (fs.existsSync("tracker.json")) {
     //file exists so append create record to json
     let file = JSON.parse(fs.readFileSync("tracker.json", "utf-8"));
-    id = file.length;
-    let temp = {
-      id: id + 1,
-      task: argv[3],
-    };
-    const newFile = [...file, temp];
+    record.id = file.length + 1;
+    const newFile = [...file, record];
     content = JSON.stringify(newFile);
   } else {
     //create record and make json
-    id = 1;
-    content = JSON.stringify([{ id: id, task: argv[3] }]);
+    content = JSON.stringify([record]);
   }
   //if not exists create else write file with above contents
   fs.writeFile("tracker.json", content, (err) => {
     if (err) {
       console.error(err);
     } else {
-      console.log(`Task added successfully (ID:${id})`);
+      console.log(`Task added successfully (ID:${record.id})`);
     }
   });
 }
@@ -44,7 +46,7 @@ if (command === "update") {
     else {
       let newFile = file.map((f, _) => {
         if (f.id === parseInt(id)) {
-          return { ...f, task: task };
+          return { ...f, description: task, updatedAt: Date.now() };
         } else return f;
       });
       newFile = JSON.stringify(newFile);
@@ -56,7 +58,6 @@ if (command === "update") {
   } else throw new Error("Task does not exist, please create first");
 }
 
-// task-cli delete 1
 // Delete
 
 if (command === "delete") {
