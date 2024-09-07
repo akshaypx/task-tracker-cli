@@ -68,7 +68,7 @@ if (command === "delete") {
     if (newFile.length === file.length)
       throw new Error("Task specified does not exist");
     let content = JSON.stringify(newFile);
-    fs.writeFileSync("tracker.json", content, (err) => {
+    fs.writeFile("tracker.json", content, (err) => {
       if (err) throw new Error(err);
       else console.log(`Task (ID:${id}) deleted successfully`);
     });
@@ -93,4 +93,39 @@ if (command === "list") {
   } else {
     throw new Error("No Tasks Exist, Consider adding some");
   }
+}
+
+// Status Updation
+
+if (command === "mark-in-progress" || command === "mark-done") {
+  let id = argv[3];
+  if (fs.existsSync("tracker.json")) {
+    //file exists
+    let file = JSON.parse(fs.readFileSync("tracker.json", "utf-8"));
+    if (file.length === 0)
+      throw new Error("No Tasks exist, consider adding a few");
+    else {
+      let counter = 0;
+      let newFile = file.map((f, _) => {
+        if (f.id === parseInt(id)) {
+          counter += 1;
+          return {
+            ...f,
+            status: command === "mark-done" ? "done" : "in-progress",
+            updatedAt: Date.now(),
+          };
+        } else return f;
+      });
+      if (counter === 0) throw new Error("Specified task does not exist");
+      else {
+        let content = JSON.stringify(newFile);
+        fs.writeFile("tracker.json", content, (err) => {
+          if (err) throw new Error(err);
+          else {
+            console.log(`Status of Task (ID:${id}) updated successfully`);
+          }
+        });
+      }
+    }
+  } else throw new Error("No Tasks exist, consider adding a few");
 }
