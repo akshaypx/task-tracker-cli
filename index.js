@@ -74,3 +74,23 @@ if (command === "delete") {
     });
   } else throw new Error("No Task Exist, Please add before deleting");
 }
+
+// List all tasks
+
+if (command === "list") {
+  if (fs.existsSync("tracker.json")) {
+    let file = JSON.parse(fs.readFileSync("tracker.json", "utf-8"));
+    if (file.length === 0)
+      throw new Error("No Tasks Exist, Consider adding some");
+    file.map((f, _) => {
+      console.log("\n");
+      console.log(`Task ID - ${f.id}`);
+      console.log(`Description - ${f.description}`);
+      console.log(`Status - ${f.status}`);
+      console.log(`Created At - ${f.createdAt}`);
+      console.log(`Updated At - ${f.updatedAt}`);
+    });
+  } else {
+    throw new Error("No Tasks Exist, Consider adding some");
+  }
+}
